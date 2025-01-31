@@ -295,7 +295,6 @@ for (AbsTyp, Typ, funcs, func) in ((:AbstractZeros, :Zeros, :zeros, :zero), (:Ab
         abstract type $AbsTyp{T, N, Axes} <: AbstractFill{T, N, Axes} end
         $(Symbol(AbsTyp,"Vector")){T} = $AbsTyp{T,1}
         $(Symbol(AbsTyp,"Matrix")){T} = $AbsTyp{T,2}
-        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
 
         """ `$($Typ){T, N, Axes} <: AbstractFill{T, N, Axes}` (lazy `$($funcs)` with axes)"""
         struct $Typ{T, N, Axes} <: $AbsTyp{T, N, Axes}
@@ -362,6 +361,10 @@ for (AbsTyp, Typ, funcs, func) in ((:AbstractZeros, :Zeros, :zeros, :zero), (:Ab
         function convert(::Type{$Typ}, A::AbstractFill{V,N}) where {V,N}
             convert($Typ{V,N}, A)
         end
+    end
+    #move this out, julia 1.12 does not like reusing a constant in this way
+    @eval begin
+        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
     end
 end
 
