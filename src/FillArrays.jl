@@ -362,6 +362,10 @@ for (AbsTyp, Typ, funcs, func) in ((:AbstractZeros, :Zeros, :zeros, :zero), (:Ab
             convert($Typ{V,N}, A)
         end
     end
+    #move this out, julia 1.12 does not like reusing a constant in this way
+    @eval begin
+        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
+    end
 end
 
 # conversions
@@ -369,10 +373,6 @@ for TYPE in (:Fill, :AbstractFill, :Ones, :Zeros), STYPE in (:AbstractArray, :Ab
     @eval begin
         @inline $STYPE{T}(F::$TYPE{T}) where T = F
         @inline $STYPE{T,N}(F::$TYPE{T,N}) where {T,N} = F
-    end
-
-    @eval begin
-        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
     end
 end
 
