@@ -295,7 +295,6 @@ for (AbsTyp, Typ, funcs, func) in ((:AbstractZeros, :Zeros, :zeros, :zero), (:Ab
         abstract type $AbsTyp{T, N, Axes} <: AbstractFill{T, N, Axes} end
         $(Symbol(AbsTyp,"Vector")){T} = $AbsTyp{T,1}
         $(Symbol(AbsTyp,"Matrix")){T} = $AbsTyp{T,2}
-        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
 
         """ `$($Typ){T, N, Axes} <: AbstractFill{T, N, Axes}` (lazy `$($funcs)` with axes)"""
         struct $Typ{T, N, Axes} <: $AbsTyp{T, N, Axes}
@@ -370,6 +369,10 @@ for TYPE in (:Fill, :AbstractFill, :Ones, :Zeros), STYPE in (:AbstractArray, :Ab
     @eval begin
         @inline $STYPE{T}(F::$TYPE{T}) where T = F
         @inline $STYPE{T,N}(F::$TYPE{T,N}) where {T,N} = F
+    end
+
+    @eval begin
+        $(Symbol(AbsTyp,"VecOrMat")){T} = Union{$(Symbol(AbsTyp,"Vector")){T},$(Symbol(AbsTyp,"Matrix"))}
     end
 end
 
